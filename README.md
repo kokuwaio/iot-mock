@@ -31,7 +31,8 @@ These volumes are:
 To run this container simply call:
 
 ```shell
-docker run --user `id -u`:`id -g` -v `pwd`/mdns:/mdns -v `pwd`/openapi:/openapi ghcr.io/kokuwaio/iot-mock
+docker pull ghcr.io/kokuwaio/iot-mock:0.1
+docker run --user `id -u`:`id -g` -v `pwd`/mdns:/mdns -v `pwd`/openapi:/openapi ghcr.io/kokuwaio/iot-mock:0.1
 ```
 
 ### In JUnit with Testcontainers
@@ -50,7 +51,7 @@ private Network network = Network.newNetwork();
  * Create a new docker container via testcontainers and the correct tag of this image.
  */
 @Container
-public GenericContainer iotMock = new GenericContainer<>("ghcr.io/kokuwaio/iot-mock")
+public GenericContainer iotMock = new GenericContainer<>("ghcr.io/kokuwaio/iot-mock:0.1")
     // Add our avahi service configuration to the container
     .withCopyFileToContainer(MountableFile.forClasspathResource("petstore.service"), "/mdns/")
     // insert the openapi sec into the container
