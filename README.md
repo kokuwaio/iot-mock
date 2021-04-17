@@ -32,7 +32,7 @@ To run this container simply call:
 
 ```shell
 docker pull ghcr.io/kokuwaio/iot-mock:0.1
-docker run --user `id -u`:`id -g` -v `pwd`/mdns:/mdns -v `pwd`/openapi:/openapi ghcr.io/kokuwaio/iot-mock:0.1
+docker run -v `pwd`/mdns:/mdns -v `pwd`/openapi:/openapi ghcr.io/kokuwaio/iot-mock:0.1
 ```
 
 ### In JUnit with Testcontainers
