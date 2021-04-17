@@ -1,0 +1,15 @@
+<?xml version="1.0" standalone='no'?>
+<!DOCTYPE service-group SYSTEM "avahi-service.dtd">
+<service-group>
+        <name>petstore</name>
+        <service>
+                <type>_json._tcp</type>
+                <port>8080</port>
+                <txt-record>foo=bar</txt-record>
+				<txt-record>x=y</txt-record>
+        </service>
+        <service>
+                <type>_all._tcp</type>
+                <port>8080</port>
+        </service>
+</service-group>
