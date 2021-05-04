@@ -4,7 +4,7 @@ if [ "${DEBUG}" == "true" ]; then
   set -x
 fi
 
-cp ${MDNS_PATH}/*.service /etc/avahi/services/
+cp "${MOCKDATA_PATH}"/*.service /etc/avahi/services/
 
 AUG_BASE="/files/etc/avahi/avahi-daemon.conf"
 

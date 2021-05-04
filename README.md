@@ -20,20 +20,25 @@ The idea behind is simple:
 1. Give an OpenAPI file that describes the API of your device
 1. Run the simulator
 
-For doing so there are two volumes where you can put your configurations in. Per default, the container will offer the [PetStore](https://github.com/OAI/OpenAPI-Specification/blob/main/examples/v3.0/petstore.yaml) example from OpenAPI.
-These volumes are:
+For doing so there is one volume where you can put your configurations in. 
 
-1. ```/mdns``` - Put [Avahi service](https://linux.die.net/man/5/avahi.service) files in.
-1. ```/openapi``` - Put the [OpenAPI](https://spec.openapis.org/) files in.
-
-### Via docker command
-
-To run this container simply call:
-
+To try it out you can change this via environment to Petstore:
 ```shell
-docker pull ghcr.io/kokuwaio/iot-mock:0.1
-docker run -v `pwd`/mdns:/mdns -v `pwd`/openapi:/openapi ghcr.io/kokuwaio/iot-mock:0.1
+docker pull ghcr.io/kokuwaio/iot-mock:0.2
+docker run -it --rm -e "MOCKDATA_PATH=/petstore" ghcr.io/kokuwaio/iot-mock:0.2
 ```
+So we will offer the [PetStore](https://github.com/OAI/OpenAPI-Specification/blob/main/examples/v3.0/petstore.yaml) example from OpenAPI.
+
+To put your custom definitions in, simply mount a folder with two files to /mockdata like:
+```shell
+docker pull ghcr.io/kokuwaio/iot-mock:0.2
+docker run -it --rm -v `pwd`/mockdata:/mockdata ghcr.io/kokuwaio/iot-mock:0.2
+```
+The folder should contain two files, like:
+
+* mockdata/
+  * ```mdns.service``` - The [Avahi service](https://linux.die.net/man/5/avahi.service) configuration.
+  * ```openapi.yaml``` - The [OpenAPI](https://spec.openapis.org/) specification.
 
 ### In JUnit with Testcontainers
 
@@ -53,9 +58,9 @@ private Network network = Network.newNetwork();
 @Container
 public GenericContainer iotMock = new GenericContainer<>("ghcr.io/kokuwaio/iot-mock:0.1")
     // Add our avahi service configuration to the container
-    .withCopyFileToContainer(MountableFile.forClasspathResource("petstore.service"), "/mdns/")
+    .withCopyFileToContainer(MountableFile.forClasspathResource("mdns.service"), "/mockdata/")
     // insert the openapi sec into the container
-    .withClasspathResourceMapping("petstore.yaml", "/openapi/petstore.yaml", BindMode.READ_ONLY)
+    .withClasspathResourceMapping("openapi.yaml", "/mockdata/openapi.yaml", BindMode.READ_ONLY)
     // attach to our dedicated network (optional)
     .withNetwork(network)
     // Set the containers hostname to our expected hostname (optional)
@@ -68,18 +73,6 @@ public GenericContainer iotMock = new GenericContainer<>("ghcr.io/kokuwaio/iot-m
     .withEnv("SERVER_DOMAIN_NAME", "local")
     // Configure the port where mockserver should be available. Must fit to mDNS service configuration. (optional, default 8080)
     .withEnv("API_PORT", "8080");
-
-/**
- * Configure MockServer with the OpenAPI file.
- * Add your expectations if needed.
- * Maybe, we can add this autmagically iside the docker container to simplify test code.
- **/     
-@BeforeEach
-public void initialize() {
-    MockServerClient client = new MockServerClient("localhost", iotMock.getMappedPort(8080));
-    client.upsert(openAPIExpectation("/openapi/petstore.yaml"));
-    
-...
 ```
 Check the very good documentations of [Testcontainers](https://www.testcontainers.org/) and [MockServer](https://www.mock-server.com/) for further usage details.
 
