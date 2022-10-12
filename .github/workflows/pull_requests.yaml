@@ -7,13 +7,14 @@ env:
   IMG: ghcr.io/kokuwaio/iot-mock
 
 jobs:
+
   shellcheck:
-    name: Shellcheck
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Run ShellCheck
         uses: ludeeus/action-shellcheck@master
+
   dockerfile:
     runs-on: ubuntu-latest
     steps:
@@ -21,6 +22,23 @@ jobs:
       - uses: hadolint/hadolint-action@v2.1.0
         with:
           dockerfile: Dockerfile
+      - uses: actions/github-script@v6
+        if: github.event_name == 'pull_request' && failure()
+        with:
+          script: |
+            const output = `
+            #### Hadolint: \`${{ steps.hadolint.outcome }}\`
+            \`\`\`
+            ${process.env.HADOLINT_RESULTS}
+            \`\`\`
+            `;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
