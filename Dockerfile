@@ -1,6 +1,6 @@
-FROM azul/zulu-openjdk-alpine:11
+FROM eclipse-temurin:17-jre-alpine
 
-ARG MOCKSERVER_VERSION=5.11.2
+ARG MOCKSERVER_VERSION=5.14.0
 ARG MOCKSERVER_URL=https://repo1.maven.org/maven2/org/mock-server/mockserver-netty/${MOCKSERVER_VERSION}/mockserver-netty-${MOCKSERVER_VERSION}-jar-with-dependencies.jar
 
 ENV MOCKDATA_PATH=/mockdata
