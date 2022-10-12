@@ -1,11 +1,6 @@
-name: CI Deploy
+name: PR Build
 
 on:
-  push:
-    branches:
-      - main
-    tags:
-      - '*'
   pull_request: {}
 
 env:
@@ -52,5 +47,5 @@ jobs:
         with:
           context: .
           platforms: linux/amd64
-          push: true
+          push: false
           tags: ${{ steps.meta.outputs.tags }}
