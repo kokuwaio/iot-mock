@@ -1,23 +1,21 @@
-name: CI Deploy
+name: PR Build
 
 on:
-  push:
-    branches:
-      - main
-    tags:
-      - '*'
+  pull_request: {}
 
 env:
   IMG: ghcr.io/kokuwaio/iot-mock
 
 jobs:
+
   shellcheck:
-    name: Shellcheck
+    name: Shell Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Run ShellCheck
         uses: ludeeus/action-shellcheck@master
+
   dockerfile:
     name: Dockerfile Check
     runs-on: ubuntu-latest
@@ -28,8 +26,25 @@ jobs:
           dockerfile: Dockerfile
           verbose: true
           failure-threshold: error
+      - uses: actions/github-script@v6
+        if: github.event_name == 'pull_request' && failure()
+        with:
+          script: |
+            const output = `
+            #### Hadolint: \`${{ steps.hadolint.outcome }}\`
+            \`\`\`
+            ${process.env.HADOLINT_RESULTS}
+            \`\`\`
+            `;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+
   deploy:
-    name: Deploy Docker
+    name: Build Docker
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
@@ -54,5 +69,5 @@ jobs:
         with:
           context: .
           platforms: linux/amd64
-          push: true
+          push: false
           tags: ${{ steps.meta.outputs.tags }}

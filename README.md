@@ -24,15 +24,15 @@ For doing so there is one volume where you can put your configurations in.
 
 To try it out you can change this via environment to Petstore:
 ```shell
-docker pull ghcr.io/kokuwaio/iot-mock:0.2
-docker run -it --rm -e "MOCKDATA_PATH=/petstore" ghcr.io/kokuwaio/iot-mock:0.2
+docker pull ghcr.io/kokuwaio/iot-mock:latest
+docker run -it --rm -e "MOCKDATA_PATH=/petstore" ghcr.io/kokuwaio/iot-mock:latest
 ```
 So we will offer the [PetStore](https://github.com/OAI/OpenAPI-Specification/blob/main/examples/v3.0/petstore.yaml) example from OpenAPI.
 
 To put your custom definitions in, simply mount a folder with two files to /mockdata like:
 ```shell
-docker pull ghcr.io/kokuwaio/iot-mock:0.2
-docker run -it --rm -v `pwd`/mockdata:/mockdata ghcr.io/kokuwaio/iot-mock:0.2
+docker pull ghcr.io/kokuwaio/iot-mock:latest
+docker run -it --rm -v `pwd`/mockdata:/mockdata ghcr.io/kokuwaio/iot-mock:latest
 ```
 The folder should contain two files, like:
 
@@ -56,7 +56,7 @@ private Network network = Network.newNetwork();
  * Create a new docker container via testcontainers and the correct tag of this image.
  */
 @Container
-public GenericContainer iotMock = new GenericContainer<>("ghcr.io/kokuwaio/iot-mock:0.1")
+public GenericContainer iotMock = new GenericContainer<>("ghcr.io/kokuwaio/iot-mock:latest")
     // Add our avahi service configuration to the container
     .withCopyFileToContainer(MountableFile.forClasspathResource("mdns.service"), "/mockdata/")
     // insert the openapi sec into the container

@@ -1,6 +1,6 @@
 #!/bin/sh -e
 
-if [ "${DEBUG}" == "true" ]; then
+if [ "${DEBUG}" = "true" ]; then
   set -x
 fi
 
@@ -153,7 +153,7 @@ fi
 
 
 # Execute the provided command
-if [ $# == 0 ] || [ "${1:0:1}" == "-" ]; then
+if [ $# = 0 ] || [ "$(printf '%s' "$1" | cut -c 1)" = "-" ]; then
   exec avahi-daemon "$@"
 else
   exec "$@"
