@@ -8,21 +8,24 @@ env:
 
 jobs:
   shellcheck:
-    name: Shellcheck
+    name: Shell Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Run ShellCheck
         uses: ludeeus/action-shellcheck@master
   dockerfile:
+    name: Dockerfile Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: hadolint/hadolint-action@v2.1.0
         with:
           dockerfile: Dockerfile
+          verbose: true
+          failure-threshold: info
   deploy:
-    name: Deploy
+    name: Build Docker
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
